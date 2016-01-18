@@ -1,6 +1,23 @@
 import {bootstrap} from 'angular2/platform/browser';
-import {ContactsApp} from './contacts-app/contacts-app';
-import {HTTP_PROVIDERS} from 'angular2/http';
-import {ContactsService} from './contacts-app/services/contacts-service';
+import {Component} from 'angular2/core';
+import {HTTP_PROVIDERS, Http} from 'angular2/http';
+import 'rxjs/add/operator/map';
 
-bootstrap(ContactsApp, [HTTP_PROVIDERS, ContactsService]);
+@Component({
+  selector: 'app',
+  template: `
+    <h1>Angular 2 Starter App</h1>
+    <h3>This is working if you see a list of names below</h3>
+    <div *ngFor="#person of people | async">{{person.name.first}} {{person.name.last}}</div>
+  `
+})
+export class App{
+  people;
+  constructor(public http:Http){
+    this.people = http
+      .get('http://localhost:3000/people')
+      .map(res => res.json())
+  }
+}
+
+bootstrap(App, [HTTP_PROVIDERS]);
